@@ -16,12 +16,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        let splitViewController = self.window!.rootViewController as UISplitViewController
-        let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as UINavigationController
-        navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
-        splitViewController.delegate = self
+//        let splitViewController = self.window!.rootViewController as UISplitViewController
+//        let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as UINavigationController
+//        navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
+//        splitViewController.delegate = self
+//        
+//        
+        Parse.setApplicationId("4kbfaQfgYxi4p7OQOeudamSPaLk5OpD6gCTLSzUD",
+        clientKey:"lTmwcTmHwvZqhfcBa2VhPnSbL5wg53tEcDzPJYBj")
+        
+        // Register for Push Notitications
+       let userNotificationTypes = (UIUserNotificationType.Alert |
+            UIUserNotificationType.Badge |
+            UIUserNotificationType.Sound);
+        
+        let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
+        
+        application.registerUserNotificationSettings(settings)
+        application.registerForRemoteNotifications()
+
         return true
     }
+    
+    
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        
+        let currentInstallation = PFInstallation.currentInstallation()
+        currentInstallation.setDeviceTokenFromData(deviceToken)
+        currentInstallation.saveInBackground()
+        
+    }
+    
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        
+      //  PFPush.handlePush(userInfo)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("Push Touch", object: nil, userInfo: userInfo)
+        
+        
+        println(userInfo)
+        
+    }
+    
+    
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
